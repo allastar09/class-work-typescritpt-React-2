@@ -2,6 +2,7 @@ import React from 'react'
 import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import Layout from './Layout.tsx'
+import Home from './pages/Home.tsx';
 
 const App = () => {
 
@@ -15,8 +16,8 @@ const App = () => {
           element: 'Home'
         },
         {
-          path: "/about",
-          element: 'it is about'
+          path: "/home",
+          element: <Home />
         }
       ]
     }
