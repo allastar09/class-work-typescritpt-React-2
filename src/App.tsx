@@ -18,7 +18,7 @@ const App = () => {
         {
           path: "/home",
           element: <Home />
-        }
+        },
       ]
     }
   ]);
