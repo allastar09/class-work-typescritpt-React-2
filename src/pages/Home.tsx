@@ -1,13 +1,9 @@
-
-import React, { useEffect, useState } from 'react'
-import { useFormik } from 'formik';
+import { useEffect, useState } from 'react'
 import axios from 'axios'
-
-let api = 'https://to-dos-api.softclub.tj/api/to-dos'
-let apiimg = 'https://to-dos-api.softclub.tj/'
+import { Formik, Form, Field } from 'formik'
 
 const Home = () => {
-
+  let api = 'https://to-dos-api.softclub.tj/api/to-dos'
   const [data, setData] = useState([])
 
   async function get() {
@@ -19,41 +15,6 @@ const Home = () => {
     }
   }
 
-  async function post(values) {
-    try {
-      let formData = new FormData()
-      formData.append('Name', values.name)
-      formData.append('Description', values.description)
-
-      values.images.forEach((image) => {
-        formData.append('Images', image)
-      })
-
-      await axios.post(api, formData)
-
-      get()
-
-    } catch (error) {
-      console.error('error with post', error);
-    }
-  }
-
-  useEffect(()=>{
-    get()
-  },[])
-
-  const {values, handleChange, handleSubmit, setFieldValue} = useFormik({
-    initialValues: {
-      name: '',
-      description: '',
-      images: []
-    },
-
-    onSubmit: values => {
-      post(values)
-    },
-  });
-
   async function deleteUser(id) {
     try {
       await axios.delete(`${api}?id=${id}`)
@@ -62,49 +23,97 @@ const Home = () => {
       console.error('problem with delete', error);
     }
   }
+
+  async function post(values) {
+    try {
+      let formData = new FormData()
+
+      formData.append('Name', values.name)
+      formData.append('Description', values.description)
+
+      values.images.forEach((image) => {
+      formData.append('Images', image)
+    })
+
+
+      await axios.post(api, formData)
+      get()
+    } catch (error) {
+      console.error('problem with post', error);
+    }
+  }
+
+   useEffect(()=>{
+    get()
+  }, [])
+
   return (
     <div>
 
-      <form onSubmit={handleSubmit} className='flex gap-[10px] ml-[50px] mt-[30px] mb-[30px]'>
-        <input type="text" name='name' placeholder='Name' onChange={handleChange} value={values.name} className='border p-[2px]'/>
-        <input type="text" name='description' placeholder='Description' onChange={handleChange} value={values.description} className='border p-[2px]'/>
-        <input
-          type="file"
-          onChange={(e) => setFieldValue('images', Array.from(e.target.files))}
-          className="border"
-        />
-        <button type='submit' className='border p-[10px]'>submit</button>
-      </form>
+    <Formik
+  initialValues={{
+    name: '',
+    description: '',
+    images: []
+  }}
+  onSubmit={(values) => {
+    post(values)
+  }}
+>
+  {({ setFieldValue }) => (
+    <Form className="p-[30px] flex gap-[20px]">
 
-      <table className="border border-collapse">
-  <thead>
-    <tr>
-      <th className="border p-[3px]">Images</th>
-      <th className="border p-[3px]">Name</th>
-      <th className="border p-[3px]">Description</th>
-      <th>A</th>
-    </tr>
-  </thead>
+      <Field name="name" className="border" />
 
-  <tbody>
-    {data.map((el) => (
-      <tr key={el.id}>
-        <td className="border p-[3px]">
-          {el.images.map((e) => (
-            <img src={apiimg + el.iamges + e.imageName} width="100" alt="" />
-          ))}
-        </td>
+      <Field name="description" className="border" />
 
-        <td className="border p-[3px]">{el.name}</td>
-        <td className="border p-[3px]">{el.description}</td>
-        <td>
-          <button className='p-[5px] bg-[red] text-[white]' onClick={()=>deleteUser(el.id)}>Delete</button>
+      <input
+        type="file"
+        multiple
+        onChange={(e) => {
+          setFieldValue('images', Array.from(e.target.files))
+        }}
+      />
+
+      <button
+        type="submit"
+        className="border p-[2px] bg-[green] text-[white] w-[60px]"
+      >
+        Send
+      </button>
+
+    </Form>
+  )}
+</Formik>
+
+      <table className="border-collapse border border-black w-full">
+        <thead>
+          <tr>
+            <th className="border border-black p-2">Img</th>
+            <th className="border border-black p-2">Name</th>
+            <th className="border border-black p-2">Descritpion</th>
+            <th className="border border-black ">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            data.map(el=>{
+              return(
+        <tr>
+              <td className="border border-black p-2"></td>
+              <td className="border border-black p-2">{el.name}</td>
+              <td className="border border-black p-2">{el.description}</td>
+              <td className="border border-black p-2">
+          <button onClick={() => deleteUser(el.id)}>
+            Delete
+          </button>
         </td>
       </tr>
-    ))}
-  </tbody>
-</table>
-
+              )  
+            })
+          }
+        </tbody>
+      </table>
     </div>
   )
 }
