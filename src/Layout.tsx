@@ -19,6 +19,12 @@ const Layout = () => {
           >
             Todo
           </Link>
+          <Link
+            to="/info"
+            className="text-base font-semibold tracking-wide text-gray-700 transition hover:text-indigo-600"
+          >
+            Info
+          </Link>
         </div>
       </nav>
 

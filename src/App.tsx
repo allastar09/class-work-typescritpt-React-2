@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import Layout from './Layout.tsx'
 import Home from './pages/Home.tsx';
+import Info from './pages/Info.tsx';
 
 const App = () => {
 
@@ -19,6 +20,10 @@ const App = () => {
           path: "/home",
           element: <Home />
         },
+        {
+          path: '/info',
+          element: <Info />
+        }
       ]
     }
   ]);
